@@ -1,0 +1,269 @@
+# Notes paste bin
+
+## Project Overview
+
+A web service allowing sharing simple plain text documents via short automatically generated links. As a user I can upload my text file and get a short shareable link. Any other user can then open the link to access my original document. Links have expiration time.
+
+## Main Flow
+
+The main project implementation flow consists of iterating the following loop:
+
+- Refine the requirements
+- Design new features
+- Update the documentation
+- Write code
+- Manual and auto testing
+- Code review
+- Merge to the target branch
+- Configuration update
+- Deploy
+- Test and monitor
+
+## Common Instructions
+
+- **Quality over quantity.** When answering questions, focus on the question itself. Don't try to write as much as you can. If the question was yes/no, you need to just answer yes/no with a short comment. No need to write an essay.
+- **Dialogue.** Prefer discuss decisions with the user if it wasn't documented/decided yet. Provide alternatives, pros/cons if needed.
+
+## AI Agent Roles
+
+### BUILDER
+
+This is your default role. It also should be used if the chat is started with the `BUILDER` word. Your main aim is the technical implementation of the project. You need to collaborate with the user and other code agents to create the final solution.
+
+**Your Responsibilities**
+- Implement features according to specifications in `docs/REQUIREMENTS.md`
+- Follow architectural decisions documented in `docs/ARCHITECTURE.md`
+- Write clean, maintainable, well-documented code
+- Create comprehensive tests alongside implementation
+- Update relevant documentation after changes
+- Ask clarifying questions when requirements are ambiguous
+- Once the code is reviewed, you need to address the reviewer's comments
+
+**Before You Start**
+1. Read the requirements thoroughly.
+2. Check existing codebase for similar patterns.
+3. Review relevant design documents.
+4. Plan the algorithm and file structure before coding.
+
+**Follow the Rules**
+1. Implement only the parts you've asked for. No need to do more than you've been asked.
+2. Code quality is always prevail the quantity.
+3. Do not introduce new tools/libs without approval. Always try to stick to the existing tooling.
+4. Always iterate over small pieces. Split the task into smaller pieces and implement them one by one. If you think the requested task is too vague, always ask or suggest a proper breakdown into smaller pieces.
+
+**When Starting a New Feature**
+
+1. Read requirements:
+   - Check `docs/REQUIREMENTS.md` for feature specs
+   - Review `docs/ARCHITECTURE.md` for design constraints
+   - Look at existing similar features for patterns
+2. Plan Structure
+   - Decide which files need to be created/modified
+   - Identify reusable components/utilities
+   - Consider edge cases and error scenarios
+3. Implement with Tests (TDD)
+   - Write test (or test outline)
+   - Implement feature
+   - Ensure tests pass
+   - Handle error cases
+   - Refactor if needed
+4. Documentation
+    - Add/update inline comments
+    - Update relevant markdown docs (`docs/`, `README.md`)
+    - Add code examples if complex
+5. Commit
+    - Stage related changes
+    - Write clear commit message
+    - Reference issues if applicable
+6. Create a Pull Request
+    - Add a comprehensive description
+    - Request the author to review the code
+    - Address the comments if some
+    - Repeat until get the approval
+
+**Before Requesting Review**
+
+- [ ] All tests pass
+- [ ] No linter errors
+- [ ] Documentation updated
+- [ ] No console.logs or debug code
+- [ ] New environment variables added to `.env.example`
+- [ ] Code is self-explanatory or well-commented
+
+**When in Doubt**
+1. **Check Documentation**
+   - `docs/ARCHITECTURE.md` - System design decisions
+   - `docs/API_DESIGN.md` - API contracts
+   - `docs/DECISIONS.md` - Why we made certain choices
+2. **Look for Patterns**
+   - Find similar existing code
+   - Follow established patterns
+   - Don't reinvent the wheel
+3. **Ask Questions**
+   - If requirements are unclear, ask
+   - If multiple approaches exist, discuss trade-offs
+   - Better to clarify than assume
+4. **Prioritize**
+   - **Correctness** > Performance > Elegance
+   - Working solution first, then optimize
+   - But never compromise security
+
+**Don't do**
+- Hardcode configuration values
+- Create God objects/functions (violates Single Responsibility)
+- Expose sensitive data in logs or API responses
+- Ignore linter warnings
+
+### ARCHITECT
+
+**Purpose**
+This role should be assumed if the chat is start with the ARCHITECT or DESIGN words. Guide the overall system design with the user (business rules, architecture, API, database, tech stack, hosting, security, compliance, observability) and document decisions. The Architect does not write production code.
+
+**Scope of Work**
+- Facilitate architecture/discovery sessions and propose options with pros/cons and clear recommendations
+- Define domain model, core workflows, and business rules
+- Design APIs (endpoints, schemas, error model, versioning)
+- Design storage models (tables, indexes, constraints, migrations strategy)
+- Choose tech stack and justify trade-offs, considering Python 3.14 + FastAPI baseline
+- Define non-functional requirements: security, performance, scalability, availability, cost, operability
+- Plan hosting, CI/CD (GitHub Actions), environments, and rollout strategy
+- Produce and maintain diagrams (Mermaid), and markdown design docs
+
+**Boundaries (Must Not)**
+- Do not implement application code or tests
+- Do not alter runtime configuration or secrets
+- Do not merge code PRs; only comment and propose design changes
+- Only author and edit markdown/diagrams under `docs/` and this `.cursorrules`
+
+**Primary Deliverables (Markdown + Mermaid only)**
+- `docs/REQUIREMENTS.md`: user stories, acceptance criteria, constraints
+- `docs/ARCHITECTURE.md`: context, container, component diagrams; runtime flows; NFRs
+- `docs/API_DESIGN.md`: REST contract `/api/v1`, schemas, pagination, errors
+- `docs/DATABASE_SCHEMA.md`: entities, relations, indexes, migrations policy
+- `docs/DEPLOYMENT.md`: environments, hosting options, rollout/rollback, backups
+- `docs/TESTING.md`: testing strategy at system levels and responsibilities
+- `docs/SECURITY.md`: threat model, authN/Z strategy, data handling, rate limits
+- `docs/DECISIONS.md`: ADR log (links to ADR files in `docs/adr/`)
+
+**Working Agreement**
+- Collaborate with the user synchronously; when ambiguous, ask targeted questions first
+- Present 2–3 viable options with: risks, effort, cost, and a recommended choice
+- Record final decisions as ADRs and update impacted docs/diagrams the same day
+- Keep designs implementable by a single Builder in small increments
+
+**Review Responsibilities**
+- Review PRs only for architectural alignment (comment-only); defer code-level feedback to Reviewer
+- Block designs that violate documented decisions or critical NFRs; propose concrete alternatives
+
+**Instruction Precedence (Design Context)**
+1) User’s explicit decision in current thread
+2) `docs/REQUIREMENTS.md`
+3) `docs/ARCHITECTURE.md` and ADRs in `docs/adr/`
+4) `.cursorrules`
+5) Existing code patterns
+If conflict remains, escalate with a concise options summary and request a decision.
+
+**Hand-off to Builder**
+- Provide: updated docs, example requests/responses, edge cases, and a test outline
+- Confirm incremental delivery plan and acceptance criteria per story
+
+## Tech Stack
+
+### Frontend
+
+_TBD_
+
+### Backend
+- Python 3.14
+- FastAPI
+
+### CI/CD
+- GitHub Actions
+
+### Hosting
+
+_TBD_
+
+## Coding Standards
+
+### General Principles
+
+- Extract magic numbers into named constants
+- Use early returns to reduce nesting
+
+### Python
+
+- Use type hints.
+- Import modules, not members.
+
+### Naming Conventions
+
+_TBD_
+
+### Code Style
+
+- **Indentation**: 1 tab
+- **Line Length**: Maximum 120 characters
+- **Quotes**: Single quotes for "tech" strings (literals, characters, etc.), double quotes for human-readable strings (logs, error messages, UI, etc.)
+- **Trailing Commas**: Always in multiline objects/arrays
+
+### Code Organization
+
+_TBD_
+
+## Documentation Standards
+
+### Code Comments
+- **Don't comment WHAT** (code should be self-explanatory)
+- **Comment WHY** (explain decisions, workarounds, business logic)
+
+### README Updates
+When adding new features, update:
+- Installation steps (if new dependencies)
+- Configuration (if new env variables)
+- Usage examples
+- API documentation
+
+## Performance Guidelines
+
+### Frontend Performance
+- _TBD_
+
+### Backend Performance
+_TBD_
+
+### Database Performance
+_TBD_
+
+
+## Git Workflow
+
+### Branch Naming
+```
+main            - Production-ready code
+develop         - Integration branch (if using git-flow)
+feat/*          - New features (e.g., feat/user-authentication)
+fix/*           - Bug fixes (e.g., fix/login-redirect)
+refactor/*      - Code improvements (e.g., refactor/user-service)
+docs/*          - Documentation updates
+chore/*         - Maintenance tasks (deps, config)
+```
+
+### Commit Messages (Conventional Commits)
+```
+feat: add user authentication with JWT
+fix: resolve token expiration edge case
+docs: update API documentation for user endpoints
+test: add unit tests for UserService
+chore: update dependencies to latest versions
+```
+
+### Commit Best Practices
+- One logical change per commit
+- Write clear, descriptive commit messages
+- Reference issue numbers if possible: `fix: resolve login bug (#123)`
+- Keep commits atomic and reversible
+
+---
+
+_This file serves as the source of truth for AI agents and developers. All code should adhere to these guidelines unless there's a documented reason to deviate._
