@@ -53,6 +53,7 @@ class AnyDatetime:
         """Initialize with tolerance in seconds for comparison."""
         self.expected_time = expected_time
         self.tolerance_seconds = tolerance_seconds
+
     def __eq__(self, other: object) -> bool:
         parsed_time: datetime.datetime | None = None
 

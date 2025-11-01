@@ -119,16 +119,11 @@ GET `/healthz`
 
 ## Error Model
 
-All error responses (except text/raw paths) use JSON structure:
-```
-{
-	"error": {
-		"code": "string",
-		"message": "human-readable message",
-		"details": {"optional": "context"}
-	}
-}
-```
+We rely on the default FastAPI error model and common REST error codes such as:
+- 404 Not Found
+- 429 Too Many Tokens
+- 500 Server Error
+- etc
 
 Common error codes
 - `invalid_request`: payload validation failed
