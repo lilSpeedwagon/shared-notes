@@ -59,6 +59,7 @@ Always include type hints for:
 - Use async tests for API endpoints
 - Keep tests focused on one feature
 - Always add type hints for fixtures and return types
+- Add docstrings explaining what is tested
 
 ### Don't ✗
 - Don't use test classes
