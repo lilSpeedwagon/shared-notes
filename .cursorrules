@@ -203,7 +203,7 @@ _TBD_
 
 ### Code Style
 
-- **Indentation**: 1 tab
+- **Indentation**: 4 spaces
 - **Line Length**: Maximum 120 characters
 - **Quotes**: Single quotes for "tech" strings (literals, characters, etc.), double quotes for human-readable strings (logs, error messages, UI, etc.)
 - **Trailing Commas**: Always in multiline objects/arrays

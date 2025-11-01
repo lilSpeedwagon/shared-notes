@@ -5,13 +5,37 @@ description = "A simple notes sharing service (paste bin)"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-	"fastapi>=0.115.0",
-	"uvicorn[standard]>=0.32.0",
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
 ]
 
 [project.optional-dependencies]
 dev = [
-	"pytest>=8.3.0",
-	"pytest-asyncio>=0.24.0",
-	"httpx>=0.27.0",
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.24.0",
+    "httpx>=0.27.0",
+    "ruff>=0.8.0",
+    "black>=24.0.0",
+    "isort>=5.13.0",
 ]
+
+[tool.ruff]
+line-length = 120
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "B"]
+ignore = []
+
+[tool.ruff.format]
+indent-style = "space"
+quote-style = "preserve"
+
+[tool.black]
+line-length = 120
+target-version = ["py313"]
+skip-string-normalization = true
+
+[tool.isort]
+profile = "black"
+line_length = 120
