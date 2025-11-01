@@ -137,12 +137,32 @@ For each endpoint, verify:
 
 ## CI/CD Integration
 
-Tests run automatically on:
-- Every commit (via Git hooks if configured)
-- Pull requests
-- Before deployment
+The project uses GitHub Actions for continuous integration. Tests and linters run automatically on:
+- **Pull Requests**: Every PR to `main` or `dev` branches
+- **Branch Pushes**: Direct pushes to `main` or `dev` branches
 
-All tests must pass before code can be merged.
+### What Runs in CI
+
+1. **Linters**:
+   - `ruff check` - Code quality checks
+   - `isort --check-only` - Import sorting verification
+   - `ruff format --check` - Code formatting verification
+
+2. **Tests**:
+   - All pytest tests with verbose output
+   - Tests must pass before code can be merged
+
+### Workflow File
+
+See `.github/workflows/ci.yml` for the complete CI configuration.
+
+### Requirements
+
+- All linters must pass (zero errors)
+- All tests must pass (100% success rate)
+- No changes to formatting required
+
+PRs cannot be merged until all CI checks pass.
 
 ## Troubleshooting
 
