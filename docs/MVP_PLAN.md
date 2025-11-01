@@ -10,15 +10,15 @@ A granular, incremental checklist to deliver the MVP.
 - [x] `.editorconfig` and coding standards reflected
 
 ## 1) API (In-Memory)
-- [ ] Define Pydantic schemas for create request and responses
-- [ ] Implement in-memory repository for pastes with TTL handling at read
+- [x] Define Pydantic schemas for create request and responses
+- [x] Implement in-memory repository for pastes with TTL handling at read
 - [ ] Implement token generation (Snowflake → Feistel → Base62)
 - [ ] Endpoints:
-	- [ ] POST `/api/v1/pastes`
-	- [ ] GET `/api/v1/pastes/{token}` (metadata)
-	- [ ] GET `/api/v1/pastes/{token}/content` (raw bytes)
-	- [ ] GET `/healthz` (internal routing only)
-- [ ] Error model and input validation (size limit, expires range)
+	- [x] POST `/api/v1/pastes`
+	- [x] GET `/api/v1/pastes/{token}` (metadata)
+	- [x] GET `/api/v1/pastes/{token}/content` (raw bytes)
+	- [x] GET `/healthz` (internal routing only)
+- [x] Error model and input validation (size limit, expires range)
 - [ ] CORS for future UI origin
 
 ## 2) Tests

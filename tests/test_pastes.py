@@ -132,3 +132,67 @@ async def test_paste_expiration(async_client: httpx.AsyncClient) -> None:
     # Try to retrieve - should fail as expired
     response = await async_client.get(f'/api/v1/pastes/{paste.token}')
     assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_get_paste_content(async_client: httpx.AsyncClient) -> None:
+    """Test retrieving raw paste content."""
+    # Create a paste first
+    create_payload = {'content': 'Raw content here!', 'expires_in_seconds': 3600}
+    create_response = await async_client.post('/api/v1/pastes', json=create_payload)
+    assert create_response.status_code == 201
+    token = create_response.json()['token']
+    sha256 = create_response.json()['sha256']
+
+    # Retrieve the raw content
+    response = await async_client.get(f'/api/v1/pastes/{token}/content')
+
+    assert response.status_code == 200
+    assert response.text == 'Raw content here!'
+    assert response.headers['content-type'] == 'text/plain; charset=utf-8'
+    assert response.headers['cache-control'] == 'no-store'
+    assert response.headers['etag'] == f'"{sha256}"'
+
+
+@pytest.mark.asyncio
+async def test_get_paste_content_not_found(async_client: httpx.AsyncClient) -> None:
+    """Test retrieving content for non-existent paste returns 404."""
+    response = await async_client.get('/api/v1/pastes/nonexistent/content')
+
+    assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_get_paste_content_expired(async_client: httpx.AsyncClient) -> None:
+    """Test that expired paste content cannot be retrieved."""
+    import src.api.pastes
+
+    storage = src.api.pastes.get_storage()
+
+    # Create and expire a paste
+    paste = storage.create(content='Expired', expires_in_seconds=60, content_type='text/plain; charset=utf-8')
+    paste.expires_at = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(seconds=1)
+    storage._pastes[paste.token] = paste
+
+    # Try to retrieve content
+    response = await async_client.get(f'/api/v1/pastes/{paste.token}/content')
+
+    assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_get_paste_content_with_unicode(async_client: httpx.AsyncClient) -> None:
+    """Test retrieving paste content with UTF-8 characters."""
+    # Create a paste with UTF-8 content
+    content = 'Hello 世界 🌍 Emoji test!'
+    create_payload = {'content': content, 'expires_in_seconds': 3600}
+    create_response = await async_client.post('/api/v1/pastes', json=create_payload)
+    assert create_response.status_code == 201
+    token = create_response.json()['token']
+
+    # Retrieve the raw content
+    response = await async_client.get(f'/api/v1/pastes/{token}/content')
+
+    assert response.status_code == 200
+    assert response.text == content
+    assert response.headers['content-type'] == 'text/plain; charset=utf-8'

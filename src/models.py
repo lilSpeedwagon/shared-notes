@@ -34,17 +34,3 @@ class PasteWithContent(PasteResponse):
     """Response model for paste with content included."""
 
     content: str
-
-
-class ErrorDetail(pydantic.BaseModel):
-    """Error detail model."""
-
-    code: str
-    message: str
-    details: dict[str, str] | None = None
-
-
-class ErrorResponse(pydantic.BaseModel):
-    """Error response model."""
-
-    error: ErrorDetail

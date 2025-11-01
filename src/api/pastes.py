@@ -56,3 +56,24 @@ async def get_paste(
         sha256=stored_paste.sha256,
         content=stored_paste.content,
     )
+
+
+@router.get('/{token}/content', response_class=fastapi.responses.PlainTextResponse)
+async def get_paste_content(
+    token: str,
+    storage: src.storage.memory.InMemoryPasteStorage = fastapi.Depends(get_storage),
+) -> fastapi.responses.Response:
+    """Retrieve raw paste content."""
+    stored_paste = storage.get(token)
+
+    if stored_paste is None:
+        raise fastapi.HTTPException(status_code=404, detail="Paste not found or expired")
+
+    return fastapi.responses.Response(
+        content=stored_paste.content,
+        media_type=stored_paste.content_type,
+        headers={
+            'Cache-Control': 'no-store',
+            'ETag': f'"{stored_paste.sha256}"',
+        },
+    )
