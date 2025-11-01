@@ -22,6 +22,10 @@ This document captures current tech selections for the MVP and immediate next st
 - JSON metadata, raw content endpoint with content negotiation
 - Health endpoint `/healthz` (internal only)
 
+## CI/CD
+- GitHub Actions (automated linting and testing on PRs and merges)
+- Workflow: `.github/workflows/ci.yml`
+
 ## Frontend
 - React
 - Tailwind CSS

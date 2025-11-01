@@ -3,11 +3,11 @@
 A granular, incremental checklist to deliver the MVP.
 
 ## 0) Repository and Standards
-- [ ] Initialize Python project structure (`app/`, `tests/`, `infra/`, `docs/`)
-- [ ] Base tooling: formatter, linter, type checker (e.g., ruff, black, isort)
-- [ ] FastAPI skeleton with Uvicorn config
-- [ ] Basic Makefile / task runner commands
-- [ ] `.editorconfig` and coding standards reflected
+- [x] Initialize Python project structure (`app/`, `tests/`, `infra/`, `docs/`)
+- [x] Base tooling: formatter, linter, type checker (e.g., ruff, black, isort)
+- [x] FastAPI skeleton with Uvicorn config
+- [x] Basic Makefile / task runner commands
+- [x] `.editorconfig` and coding standards reflected
 
 ## 1) API (In-Memory)
 - [ ] Define Pydantic schemas for create request and responses
