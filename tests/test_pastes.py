@@ -5,6 +5,8 @@ import datetime
 import httpx
 import pytest
 
+import tests.utils
+
 
 @pytest.mark.asyncio
 async def test_create_paste(async_client: httpx.AsyncClient) -> None:
@@ -14,13 +16,13 @@ async def test_create_paste(async_client: httpx.AsyncClient) -> None:
     response = await async_client.post('/api/v1/pastes', json=payload)
 
     assert response.status_code == 201
-    data = response.json()
-    assert 'token' in data
-    assert len(data['token']) == 11
-    assert 'expires_at' in data
-    assert data['size_bytes'] == len('Hello, World!'.encode('utf-8'))
-    assert data['content_type'] == 'text/plain; charset=utf-8'
-    assert 'sha256' in data
+    assert response.json() == {
+        'token': tests.utils.AnyStringOfLength(11),
+        'expires_at': tests.utils.AnyFutureDatetime(min_seconds=3590, max_seconds=3610),
+        'size_bytes': 13,
+        'content_type': 'text/plain; charset=utf-8',
+        'sha256': tests.utils.AnyString(),
+    }
 
 
 @pytest.mark.asyncio
@@ -31,9 +33,13 @@ async def test_create_paste_with_defaults(async_client: httpx.AsyncClient) -> No
     response = await async_client.post('/api/v1/pastes', json=payload)
 
     assert response.status_code == 201
-    data = response.json()
-    assert 'token' in data
-    assert 'expires_at' in data
+    assert response.json() == {
+        'token': tests.utils.AnyStringOfLength(11),
+        'expires_at': tests.utils.AnyFutureDatetime(min_seconds=86390, max_seconds=86410),
+        'size_bytes': 12,
+        'content_type': 'text/plain; charset=utf-8',
+        'sha256': tests.utils.AnyString(),
+    }
 
 
 @pytest.mark.asyncio
@@ -77,18 +83,21 @@ async def test_get_paste(async_client: httpx.AsyncClient) -> None:
     create_payload = {'content': 'Retrieve me!', 'expires_in_seconds': 3600}
     create_response = await async_client.post('/api/v1/pastes', json=create_payload)
     assert create_response.status_code == 201
-    token = create_response.json()['token']
+    create_data = create_response.json()
+    token = create_data['token']
 
     # Retrieve the paste
     response = await async_client.get(f'/api/v1/pastes/{token}')
 
     assert response.status_code == 200
-    data = response.json()
-    assert data['token'] == token
-    assert data['content'] == 'Retrieve me!'
-    assert data['size_bytes'] == len('Retrieve me!'.encode('utf-8'))
-    assert 'expires_at' in data
-    assert 'sha256' in data
+    assert response.json() == {
+        'token': token,
+        'content': 'Retrieve me!',
+        'expires_at': create_data['expires_at'],
+        'size_bytes': 12,
+        'content_type': 'text/plain; charset=utf-8',
+        'sha256': create_data['sha256'],
+    }
 
 
 @pytest.mark.asyncio

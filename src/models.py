@@ -14,7 +14,9 @@ class PasteCreateRequest(pydantic.BaseModel):
     """Request model for creating a paste."""
 
     content: str = pydantic.Field(..., min_length=1, max_length=MAX_CONTENT_LENGTH)
-    expires_in_seconds: int = pydantic.Field(default=DEFAULT_EXPIRES_IN_SECONDS, ge=MIN_EXPIRES_IN_SECONDS, le=MAX_EXPIRES_IN_SECONDS)
+    expires_in_seconds: int = pydantic.Field(
+        default=DEFAULT_EXPIRES_IN_SECONDS, ge=MIN_EXPIRES_IN_SECONDS, le=MAX_EXPIRES_IN_SECONDS
+    )
     filename: str | None = None
 
 

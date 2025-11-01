@@ -28,6 +28,8 @@ tests/
 import httpx
 import pytest
 
+import tests.utils
+
 @pytest.mark.asyncio
 async def test_feature_name(async_client: httpx.AsyncClient) -> None:
     """Brief description of what is being tested."""
@@ -35,8 +37,10 @@ async def test_feature_name(async_client: httpx.AsyncClient) -> None:
     
     # Check all relevant aspects in one test
     assert response.status_code == 200
-    assert response.json() == {'expected': 'data'}
-    assert 'application/json' in response.headers['content-type']
+    assert response.json() == {
+        'expected': 'data',
+        'expected_sting': tests.utils.AnyString(),
+    }
 ```
 
 ### Type Hints
@@ -45,44 +49,6 @@ Always include type hints for:
 - **Fixture parameters**: Specify the fixture type (e.g., `async_client: httpx.AsyncClient`)
 - **Return type**: Use `-> None` for test functions
 - **Variables**: Type hint local variables when type isn't obvious
-
-**Example:**
-```python
-import httpx
-import pytest
-
-@pytest.mark.asyncio
-async def test_create_paste(async_client: httpx.AsyncClient) -> None:
-    """Test paste creation with valid data."""
-    payload: dict[str, str | int] = {
-        'content': 'test content',
-        'expires_in_seconds': 3600,
-    }
-    response = await async_client.post('/api/v1/pastes', json=payload)
-    
-    assert response.status_code == 201
-```
-
-### Fixtures Available
-
-- **`async_client`** - Async HTTPX client for testing endpoints
-- **`client`** - Synchronous FastAPI TestClient (use only if needed)
-
-### Example: Health Check Test
-
-```python
-import httpx
-import pytest
-
-@pytest.mark.asyncio
-async def test_health_check(async_client: httpx.AsyncClient) -> None:
-    """Test that health check endpoint works correctly."""
-    response = await async_client.get('/healthz')
-    
-    assert response.status_code == 200
-    assert response.json() == {'status': 'healthy'}
-    assert 'application/json' in response.headers['content-type']
-```
 
 ## Test Organization
 
@@ -116,11 +82,6 @@ uv run pytest tests/test_health.py
 uv run pytest tests/test_health.py::test_health_check
 ```
 
-## Test Coverage Goals
-
-- **MVP**: Minimum 80% coverage for core endpoints
-- **Post-MVP**: 90%+ coverage including edge cases
-
 ## What to Test
 
 ### API Endpoints
@@ -130,31 +91,16 @@ For each endpoint, verify:
 - Response headers (content-type, etc.)
 - Error responses and validation
 
-### Example Test Coverage
-- `POST /api/v1/pastes` - Create paste with valid/invalid data
-- `GET /api/v1/pastes/{token}` - Retrieve existing/expired/non-existent paste
-- `GET /healthz` - Health check returns correct status
+### Standalone Functions
+- Check outputs with specified inputs
+- Make sure no side effects
+- Use parametrize instead of separate test cases
 
 ## CI/CD Integration
 
 The project uses GitHub Actions for continuous integration. Tests and linters run automatically on:
 - **Pull Requests**: Every PR to `main` or `dev` branches
 - **Branch Pushes**: Direct pushes to `main` or `dev` branches
-
-### What Runs in CI
-
-1. **Linters**:
-   - `ruff check` - Code quality checks
-   - `isort --check-only` - Import sorting verification
-   - `ruff format --check` - Code formatting verification
-
-2. **Tests**:
-   - All pytest tests with verbose output
-   - Tests must pass before code can be merged
-
-### Workflow File
-
-See `.github/workflows/ci.yml` for the complete CI configuration.
 
 ### Requirements
 
@@ -163,15 +109,3 @@ See `.github/workflows/ci.yml` for the complete CI configuration.
 - No changes to formatting required
 
 PRs cannot be merged until all CI checks pass.
-
-## Troubleshooting
-
-### Async Tests Not Running
-Ensure `pytest-asyncio` is installed and `asyncio_mode = "auto"` is set in `pyproject.toml`.
-
-### Import Errors
-Make sure the project root is in Python path. Tests import from `src.app`, not relative imports.
-
-### Test Client Issues
-Use `httpx.AsyncClient` with `ASGITransport` for async tests, or `fastapi.testclient.TestClient` for sync tests.
-

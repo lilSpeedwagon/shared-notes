@@ -25,7 +25,7 @@ async def create_paste(
     stored_paste = storage.create(
         content=paste.content,
         expires_in_seconds=paste.expires_in_seconds,
-        content_type=paste.content_type,
+        content_type='text/plain; charset=utf-8',
     )
 
     return src.models.PasteResponse(
