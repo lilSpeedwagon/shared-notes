@@ -119,7 +119,7 @@ Operational
 
 ## Constraints
 
-- Baseline stack: Python 3.14 + FastAPI (see Architecture doc for details).
+- Baseline stack: Python 3.13 + FastAPI (see Architecture doc for details).
 - No new third-party libraries without approval; prefer stdlib or already-approved deps.
 - Hosting, storage, and CI/CD are defined in architecture/deployment docs; MVP may run single instance.
 - The MVP has 0 to very low budget for hosting.

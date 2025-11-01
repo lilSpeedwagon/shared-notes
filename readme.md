@@ -12,15 +12,31 @@ A simple notes sharing service (paste bin). The main aim of this project is to l
 
 ## Prerequisites
 
-_TBD_
+- Python 3.13 or higher
+- [uv](https://docs.astral.sh/uv/) - Fast Python package installer and resolver
 
 ## Local Setup
 
-_TBD_
+1. Install dependencies:
+```bash
+make install
+```
+
+Or with dev dependencies:
+```bash
+make dev
+```
 
 ## Running Local App
 
-_TBD_
+Start the development server:
+```bash
+make run
+```
+
+The API will be available at `http://127.0.0.1:8000`
+
+Interactive API documentation (Swagger UI): `http://127.0.0.1:8000/docs`
 
 ## Testing
 

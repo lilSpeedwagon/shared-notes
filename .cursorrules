@@ -56,6 +56,7 @@ This is your default role. It also should be used if the chat is started with th
 1. Read requirements:
    - Check `docs/REQUIREMENTS.md` for feature specs
    - Review `docs/ARCHITECTURE.md` for design constraints
+   - Make sure you follow the tech decision in `docs/TECH_STACK.md`
    - Look at existing similar features for patterns
 2. Plan Structure
    - Decide which files need to be created/modified

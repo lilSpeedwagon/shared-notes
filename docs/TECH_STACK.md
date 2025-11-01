@@ -3,7 +3,7 @@
 This document captures current tech selections for the MVP and immediate next steps. Items may evolve; changes should be captured here and in ADRs if needed.
 
 ## Backend (Python)
-- Python 3.14
+- Python 3.13
 - FastAPI (web framework)
 - Uvicorn (ASGI server)
 - Pydantic (models/validation)
