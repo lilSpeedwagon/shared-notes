@@ -63,7 +63,7 @@ This is your default role. It also should be used if the chat is started with th
    - Identify reusable components/utilities
    - Consider edge cases and error scenarios
 3. Implement with Tests (TDD)
-   - Write test (or test outline)
+   - Write test (one comprehensive test per feature)
    - Implement feature
    - Ensure tests pass
    - Handle error cases

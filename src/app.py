@@ -8,5 +8,11 @@ app = fastapi.FastAPI(
 
 
 @app.get('/')
-async def hello_world():
-    return {'message': "Hello World"}
+async def root():
+    return {'message': "Shared Notes API"}
+
+
+@app.get('/healthz')
+async def health_check():
+    """Health check endpoint for monitoring and deployment readiness."""
+    return {'status': 'healthy'}

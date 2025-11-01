@@ -8,6 +8,7 @@ A simple notes sharing service (paste bin). The main aim of this project is to l
 - [Architecture](/docs/ARCHITECTURE.md)
 - [API](/docs/API_DESIGN.md)
 - [Tech Stack](/docs/TECH_STACK.md)
+- [Testing](/docs/TESTING.md)
 - [MVP Road Map](/docs/MVP_PLAN.md)
 
 ## Prerequisites
@@ -40,4 +41,14 @@ Interactive API documentation (Swagger UI): `http://127.0.0.1:8000/docs`
 
 ## Testing
 
-_TBD_
+Run tests:
+```bash
+make test
+```
+
+Run tests with coverage:
+```bash
+make test-cov
+```
+
+See [Testing Documentation](/docs/TESTING.md) for detailed testing guidelines.

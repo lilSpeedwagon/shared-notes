@@ -10,14 +10,20 @@ run:
 	uv run uvicorn src.app:app --reload --host 127.0.0.1 --port 8000
 
 lint:
-	uv run ruff check src/
-	uv run isort --check-only src/
-	uv run ruff format --check src/
+	uv run ruff check ./
+	uv run isort --check-only ./
+	uv run ruff format --check ./
 
 lint-fix:
-	uv run ruff check --fix src/
-	uv run isort src/
-	uv run ruff format src/
+	uv run ruff check --fix ./
+	uv run isort ./
+	uv run ruff format ./
 
 format:
-	uv run ruff format src/
+	uv run ruff format ./
+
+test:
+	uv run pytest
+
+test-cov:
+	uv run pytest --cov=src --cov-report=term-missing
