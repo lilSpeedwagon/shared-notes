@@ -7,6 +7,8 @@ import string
 
 import src.snowflake
 
+_BASE62_ALPHABET = string.digits + string.ascii_letters  # 0-9, a-z, A-Z (62 chars)
+
 
 @dataclasses.dataclass
 class StoredPaste:
@@ -44,8 +46,7 @@ class InMemoryPasteStorage:
         Returns:
             11-character base62 string, zero-padded for consistent length
         """
-        _BASE62_ALPHABET = string.digits + string.ascii_letters  # 0-9, a-z, A-Z (62 chars)
-        
+
         if snowflake_id == 0:
             return '0'.zfill(11)
 
