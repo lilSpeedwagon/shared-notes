@@ -3,8 +3,9 @@
 import dataclasses
 import datetime
 import hashlib
-import secrets
 import string
+
+import src.snowflake
 
 
 @dataclasses.dataclass
@@ -23,15 +24,43 @@ class StoredPaste:
 class InMemoryPasteStorage:
     """In-memory storage for pastes."""
 
-    def __init__(self) -> None:
-        """Initialize the in-memory storage."""
+    def __init__(self, worker_id: int = 0) -> None:
+        """
+        Initialize the in-memory storage.
+
+        Args:
+            worker_id: Unique worker ID for Snowflake generator (0-1023)
+        """
         self._pastes: dict[str, StoredPaste] = {}
+        self._snowflake = src.snowflake.SnowflakeGenerator(worker_id=worker_id)
+
+    def _id_to_base62(self, snowflake_id: int) -> str:
+        """
+        Convert a Snowflake ID to a base62 string.
+
+        Args:
+            snowflake_id: 64-bit Snowflake ID
+
+        Returns:
+            11-character base62 string, zero-padded for consistent length
+        """
+        _BASE62_ALPHABET = string.digits + string.ascii_letters  # 0-9, a-z, A-Z (62 chars)
+        
+        if snowflake_id == 0:
+            return '0'.zfill(11)
+
+        result = []
+        while snowflake_id > 0:
+            snowflake_id, remainder = divmod(snowflake_id, 62)
+            result.append(_BASE62_ALPHABET[remainder])
+
+        # Reverse and pad to 11 characters for consistency
+        return ''.join(reversed(result)).zfill(11)
 
     def _generate_token(self) -> str:
-        """Generate a random 11-character base62 token."""
-        # Base62: 0-9, a-z, A-Z
-        alphabet = string.digits + string.ascii_letters
-        return ''.join(secrets.choice(alphabet) for _ in range(11))
+        """Generate a unique Snowflake-based base62 token."""
+        snowflake_id = self._snowflake.generate_id()
+        return self._id_to_base62(snowflake_id)
 
     def _compute_sha256(self, content: str) -> str:
         """Compute SHA256 hash of content."""
@@ -47,9 +76,10 @@ class InMemoryPasteStorage:
         now = datetime.datetime.now(datetime.timezone.utc)
         token = self._generate_token()
 
-        # Ensure token is unique (very unlikely collision, but be safe)
-        while token in self._pastes:
-            token = self._generate_token()
+        # Snowflake guarantees uniqueness, but check anyway for safety
+        if token in self._pastes:  # pragma: no cover
+            # This should never happen with Snowflake
+            raise RuntimeError(f"Token collision detected: {token}")
 
         paste = StoredPaste(
             token=token,
