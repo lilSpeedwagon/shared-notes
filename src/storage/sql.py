@@ -5,12 +5,12 @@ import datetime
 import sqlalchemy
 import sqlalchemy.ext.asyncio
 
-import src.storage.base
-import src.storage.db.models
-import src.storage.utils
+from src.storage import base
+from src.storage import utils
+from src.storage.db import models
 
 
-class SQLPasteStorage(src.storage.base.PasteStorage):
+class SQLPasteStorage(base.PasteStorage):
     """SQL-based storage for pastes using PostgreSQL with SQLAlchemy Core."""
 
     def __init__(
@@ -26,14 +26,14 @@ class SQLPasteStorage(src.storage.base.PasteStorage):
             worker_id: Unique worker ID for Snowflake generator (0-1023)
         """
         self._session = session
-        self._token_generator = src.storage.utils.TokenGenerator(worker_id=worker_id)
+        self._token_generator = utils.TokenGenerator(worker_id=worker_id)
 
     async def create(
         self,
         content: str,
         expires_in_seconds: int,
         content_type: str = 'text/plain; charset=utf-8',
-    ) -> src.storage.base.StoredPaste:
+    ) -> base.StoredPaste:
         """Create and store a new paste in SQL database using Core."""
         now = datetime.datetime.now(datetime.timezone.utc)
         token, snowflake_id = self._token_generator.generate_token()
@@ -44,17 +44,15 @@ class SQLPasteStorage(src.storage.base.PasteStorage):
             'content': content,
             'content_type': content_type,
             'size_bytes': len(content.encode('utf-8')),
-            'sha256': src.storage.utils.compute_sha256(content),
+            'sha256': utils.compute_sha256(content),
             'created_at': now,
             'expires_at': now + datetime.timedelta(seconds=expires_in_seconds),
         }
 
-        # Insert using ORM
-        paste_model = src.storage.db.models.Paste(**paste_data)
-        self._session.add(paste_model)
-        await self._session.flush()
+        stmt = sqlalchemy.insert(models.Paste).values(**paste_data)
+        await self._session.execute(stmt)
 
-        return src.storage.base.StoredPaste(
+        return base.StoredPaste(
             token=paste_data['token'],
             content=paste_data['content'],
             content_type=paste_data['content_type'],
@@ -64,13 +62,13 @@ class SQLPasteStorage(src.storage.base.PasteStorage):
             expires_at=paste_data['expires_at'],
         )
 
-    async def get(self, token: str) -> src.storage.base.StoredPaste | None:
+    async def get(self, token: str) -> base.StoredPaste | None:
         """Retrieve a paste by token using ORM, or None if not found or expired."""
         now = datetime.datetime.now(datetime.timezone.utc)
 
-        stmt = sqlalchemy.select(src.storage.db.models.Paste).where(
-            src.storage.db.models.Paste.token == token,
-            src.storage.db.models.Paste.expires_at > now,
+        stmt = sqlalchemy.select(models.Paste).where(
+            models.Paste.token == token,
+            models.Paste.expires_at > now,
         )
 
         result = await self._session.execute(stmt)
@@ -79,7 +77,7 @@ class SQLPasteStorage(src.storage.base.PasteStorage):
         if paste is None:
             return None
 
-        return src.storage.base.StoredPaste(
+        return base.StoredPaste(
             token=paste.token,
             content=paste.content,
             content_type=paste.content_type,
@@ -93,7 +91,7 @@ class SQLPasteStorage(src.storage.base.PasteStorage):
         """Remove all expired pastes using ORM. Returns count of removed pastes."""
         now = datetime.datetime.now(datetime.timezone.utc)
 
-        stmt = sqlalchemy.delete(src.storage.db.models.Paste).where(src.storage.db.models.Paste.expires_at <= now)
+        stmt = sqlalchemy.delete(models.Paste).where(models.Paste.expires_at <= now)
 
         result = await self._session.execute(stmt)
         return result.rowcount or 0

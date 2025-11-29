@@ -6,6 +6,7 @@ import httpx
 import pytest
 
 import tests.utils
+from src.storage.db import models
 
 
 @pytest.mark.asyncio
@@ -111,11 +112,10 @@ async def test_get_paste_not_found(async_client: httpx.AsyncClient) -> None:
 @pytest.mark.asyncio
 async def test_paste_expiration(async_client: httpx.AsyncClient, db_session) -> None:
     """Test that expired pastes cannot be retrieved."""
-    import src.storage.db.models
 
     # Create an expired paste directly in the database
     now = datetime.datetime.now(datetime.timezone.utc)
-    expired_paste = src.storage.db.models.Paste(
+    expired_paste = models.Paste(
         token='expiredtest',
         snowflake_id=1234567890123456789,
         content='Expired content',
@@ -164,11 +164,9 @@ async def test_get_paste_content_not_found(async_client: httpx.AsyncClient) -> N
 @pytest.mark.asyncio
 async def test_get_paste_content_expired(async_client: httpx.AsyncClient, db_session) -> None:
     """Test that expired paste content cannot be retrieved."""
-    import src.storage.db.models
-
     # Create an expired paste directly in the database
     now = datetime.datetime.now(datetime.timezone.utc)
-    expired_paste = src.storage.db.models.Paste(
+    expired_paste = models.Paste(
         token='expiredcont',
         snowflake_id=1234567890123456790,
         content='Expired content',

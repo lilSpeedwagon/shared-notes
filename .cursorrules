@@ -23,6 +23,7 @@ The main project implementation flow consists of iterating the following loop:
 
 - **Quality over quantity.** When answering questions, focus on the question itself. Don't try to write as much as you can. If the question was yes/no, you need to just answer yes/no with a short comment. No need to write an essay.
 - **Dialogue.** Prefer discuss decisions with the user if it wasn't documented/decided yet. Provide alternatives, pros/cons if needed.
+- **Minimum changes.** When changing files, try keep the amount of changes minimal. No need to slightly update comments, variable names or other items on each iteration.
 
 ## AI Agent Roles
 
@@ -198,6 +199,7 @@ _TBD_
 
 - Use type hints.
 - Import modules, not members. Example: `from src.api import models`
+- Use SQLAlchemy Core style (not ORM). Example: `session.execute(insert(...)), session.execute(select(...))`
 
 ### Code Style
 
