@@ -1,4 +1,4 @@
-"""Pydantic models for the Shared Notes API."""
+"""Pydantic models for API request/response validation."""
 
 import datetime
 
@@ -11,7 +11,7 @@ MAX_CONTENT_LENGTH = 65536
 
 
 class PasteCreateRequest(pydantic.BaseModel):
-    """Request model for creating a paste."""
+    """Request model for creating a new paste."""
 
     content: str = pydantic.Field(..., min_length=1, max_length=MAX_CONTENT_LENGTH)
     expires_in_seconds: int = pydantic.Field(
@@ -29,8 +29,19 @@ class PasteResponse(pydantic.BaseModel):
     content_type: str
     sha256: str
 
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
 
 class PasteWithContent(PasteResponse):
-    """Response model for paste with content included."""
+    """Response model for paste with content."""
 
     content: str
+
+    model_config = pydantic.ConfigDict(from_attributes=True)
+
+
+class HealthResponse(pydantic.BaseModel):
+    """Response model for health check."""
+
+    status: str
+

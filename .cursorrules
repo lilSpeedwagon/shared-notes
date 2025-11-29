@@ -114,6 +114,8 @@ This is your default role. It also should be used if the chat is started with th
 - Create God objects/functions (violates Single Responsibility)
 - Expose sensitive data in logs or API responses
 - Ignore linter warnings
+- Add extra comments in code just to highlight your recent changes
+= Add "test" flags or settings in the application code
 
 ### ARCHITECT
 
@@ -195,11 +197,7 @@ _TBD_
 ### Python
 
 - Use type hints.
-- Import modules, not members.
-
-### Naming Conventions
-
-_TBD_
+- Import modules, not members. Example: `from src.api import models`
 
 ### Code Style
 
@@ -208,15 +206,12 @@ _TBD_
 - **Quotes**: Single quotes for "tech" strings (literals, characters, etc.), double quotes for human-readable strings (logs, error messages, UI, etc.)
 - **Trailing Commas**: Always in multiline objects/arrays
 
-### Code Organization
-
-_TBD_
-
 ## Documentation Standards
 
 ### Code Comments
 - **Don't comment WHAT** (code should be self-explanatory)
 - **Comment WHY** (explain decisions, workarounds, business logic)
+- Don't comment self-explanotary lines of code like "create db engine", "create list of something", etc
 
 ### README Updates
 When adding new features, update:
