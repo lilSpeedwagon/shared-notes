@@ -12,8 +12,8 @@ A granular, incremental checklist to deliver the MVP.
 ## 1) API (In-Memory)
 - [x] Define Pydantic schemas for create request and responses
 - [x] Implement in-memory repository for pastes with TTL handling at read
-- [ ] Implement token generation (Snowflake → Feistel → Base62)
-- [ ] Endpoints:
+- [x] Implement token generation (Snowflake → Base62)
+- [x] Endpoints:
 	- [x] POST `/api/v1/pastes`
 	- [x] GET `/api/v1/pastes/{token}` (metadata)
 	- [x] GET `/api/v1/pastes/{token}/content` (raw bytes)
@@ -22,21 +22,27 @@ A granular, incremental checklist to deliver the MVP.
 - [ ] CORS for future UI origin
 
 ## 2) Tests
-- [ ] Unit tests: token generator, validators, repository behavior
-- [ ] API tests: happy paths, validation, expiry, 404 semantics
+- [x] Unit tests: token generator, validators, repository behavior
+- [x] API tests: happy paths, validation, expiry, 404 semantics
+- [x] Migration tests: schema consistency, up/down migrations (pytest-alembic)
 - [ ] Performance smoke: basic latency check for create/retrieve
 
 ## 3) CI/CD (GitHub Actions)
-- [ ] Lint + type check + tests on PR
+- [x] Lint + type check + tests on PR
 - [ ] Build API Docker image on main
 - [ ] (Optional) Publish image to GHCR
 
 ## 4) Database Integration (PostgreSQL)
-- [ ] DB schema (`pastes` with `id`, `token`, `content`, `created_at`, `expires_at`)
-- [ ] Migration setup (Alembic)
-- [ ] SQL repository with read-before-expiry semantics
-- [ ] Config switch: in-memory vs Postgres
-- [ ] Indexes: `token` (unique)
+- [x] DB schema (`pastes` with `id`, `token`, `content`, `created_at`, `expires_at`)
+- [x] Docker Compose setup with PostgreSQL
+- [x] SQLAlchemy models for Paste
+- [x] Async database connection setup (asyncpg)
+- [x] Migration setup (Alembic with async support)
+- [x] Initial migration created and applied
+- [x] Pytest fixtures for database testing
+- [x] SQL repository with read-before-expiry semantics
+- [x] Config switch: in-memory vs Postgres
+- [x] Indexes: `token` (unique), `expires_at`
 
 ## 5) UI (React + Tailwind)
 - [ ] Create paste page: textarea, expiration selector, submit

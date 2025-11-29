@@ -41,17 +41,22 @@ flowchart LR
 ## Data Model (initial)
 
 - pastes
-  - id (bigint, primary key; 64-bit Snowflake)
-  - token (pk, short, url-safe)
+  - token (varchar(11), primary key; Base62-encoded Snowflake ID)
+  - snowflake_id (bigint, unique, indexed; original 64-bit Snowflake for ordering/audit)
   - content (text)
+  - content_type (varchar(255))
+  - size_bytes (int)
+  - sha256 (varchar(64))
   - created_at (timestamptz)
-  - expires_at (timestamptz)
-  - indexes: token
+  - expires_at (timestamptz, indexed)
 
 Notes:
 
-- Enforce expiry at read; periodic purge is post-MVP.
-- Token entropy sufficient to prevent guessing.
+- **Primary key is `token`** (not `snowflake_id`) for Citus/sharding compatibility
+- All queries are by token → perfect data locality when sharded on token
+- Snowflake ID retained for temporal ordering and audit trail
+- Enforce expiry at read; periodic purge is post-MVP
+- Token entropy sufficient to prevent guessing
 
 ## API Surface (resource level)
 
@@ -68,9 +73,13 @@ Notes:
   - Throughput: ~4M IDs/sec per worker; monotonic within worker.
   - Base62 of 64 bits fits in 11 characters (ceil(64/log2 62)).
 - Storage:
-  - Persist `id` (bigint) as the primary key.
-  - Persist `token` (11-char Base62) with a unique index for lookups.
-- Rationale: deterministic uniqueness, short tokens, shard-friendly, hides sequence/timestamp via Feistel.
+  - `token` (11-char Base62) as PRIMARY KEY - **enables efficient Citus sharding**
+  - `snowflake_id` (bigint, unique) for temporal ordering/audit
+- Rationale:
+  - **Shard-friendly**: All queries by token → perfect data locality in Citus
+  - Deterministic uniqueness via Snowflake guarantees
+  - Short, URL-safe tokens
+  - Snowflake ID embedded in worker ID enables horizontal scaling
 
 ## Security
 

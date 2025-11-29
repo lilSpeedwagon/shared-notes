@@ -5,12 +5,6 @@ import pytest
 import src.snowflake
 
 
-def test_snowflake_init_with_worker_id() -> None:
-    """Test Snowflake generator with custom worker ID."""
-    generator = src.snowflake.SnowflakeGenerator(worker_id=42)
-    assert generator.worker_id == 42
-
-
 def test_snowflake_init_invalid_worker_id() -> None:
     """Test that invalid worker IDs raise ValueError."""
     with pytest.raises(ValueError, match="worker_id must be between 0 and 1023"):

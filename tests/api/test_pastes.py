@@ -6,6 +6,7 @@ import httpx
 import pytest
 
 import tests.utils
+from src.storage.db import models
 
 
 @pytest.mark.asyncio
@@ -109,28 +110,26 @@ async def test_get_paste_not_found(async_client: httpx.AsyncClient) -> None:
 
 
 @pytest.mark.asyncio
-async def test_paste_expiration(async_client: httpx.AsyncClient) -> None:
+async def test_paste_expiration(async_client: httpx.AsyncClient, db_session) -> None:
     """Test that expired pastes cannot be retrieved."""
-    # Create a paste that expires immediately (minimum is 60 seconds in real use)
-    # For testing, we'll manipulate the storage directly
-    import src.api.pastes
-    import src.storage.memory
 
-    storage = src.api.pastes.get_storage()
-
-    # Create paste directly in storage with past expiration
-    paste = storage.create(
+    # Create an expired paste directly in the database
+    now = datetime.datetime.now(datetime.timezone.utc)
+    expired_paste = models.Paste(
+        token='expiredtest',
+        snowflake_id=1234567890123456789,
         content='Expired content',
-        expires_in_seconds=60,  # Will be in future
         content_type='text/plain; charset=utf-8',
+        size_bytes=15,
+        sha256='a' * 64,
+        created_at=now - datetime.timedelta(hours=2),
+        expires_at=now - datetime.timedelta(hours=1),  # Expired 1 hour ago
     )
-
-    # Manually set expiration to past
-    paste.expires_at = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(seconds=1)
-    storage._pastes[paste.token] = paste
+    db_session.add(expired_paste)
+    await db_session.commit()
 
     # Try to retrieve - should fail as expired
-    response = await async_client.get(f'/api/v1/pastes/{paste.token}')
+    response = await async_client.get('/api/v1/pastes/expiredtest')
     assert response.status_code == 404
 
 
@@ -163,20 +162,25 @@ async def test_get_paste_content_not_found(async_client: httpx.AsyncClient) -> N
 
 
 @pytest.mark.asyncio
-async def test_get_paste_content_expired(async_client: httpx.AsyncClient) -> None:
+async def test_get_paste_content_expired(async_client: httpx.AsyncClient, db_session) -> None:
     """Test that expired paste content cannot be retrieved."""
-    import src.api.pastes
+    # Create an expired paste directly in the database
+    now = datetime.datetime.now(datetime.timezone.utc)
+    expired_paste = models.Paste(
+        token='expiredcont',
+        snowflake_id=1234567890123456790,
+        content='Expired content',
+        content_type='text/plain; charset=utf-8',
+        size_bytes=15,
+        sha256='b' * 64,
+        created_at=now - datetime.timedelta(hours=2),
+        expires_at=now - datetime.timedelta(hours=1),  # Expired 1 hour ago
+    )
+    db_session.add(expired_paste)
+    await db_session.commit()
 
-    storage = src.api.pastes.get_storage()
-
-    # Create and expire a paste
-    paste = storage.create(content='Expired', expires_in_seconds=60, content_type='text/plain; charset=utf-8')
-    paste.expires_at = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(seconds=1)
-    storage._pastes[paste.token] = paste
-
-    # Try to retrieve content
-    response = await async_client.get(f'/api/v1/pastes/{paste.token}/content')
-
+    # Try to retrieve content - should fail as expired
+    response = await async_client.get('/api/v1/pastes/expiredcont/content')
     assert response.status_code == 404
 
 
