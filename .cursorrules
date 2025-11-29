@@ -85,8 +85,8 @@ This is your default role. It also should be used if the chat is started with th
 
 **Before Requesting Review**
 
-- [ ] All tests pass
-- [ ] No linter errors
+- [ ] All tests pass (`make test`)
+- [ ] No linter errors (`make lint`)
 - [ ] Documentation updated
 - [ ] No console.logs or debug code
 - [ ] New environment variables added to `.env.example`

@@ -5,9 +5,7 @@ import os
 import fastapi
 import sqlalchemy.ext.asyncio
 
-from src.storage import base
-from src.storage import db
-from src.storage import factory
+from src.storage import base, db, factory
 
 STORAGE_TYPE: base.StorageType = os.getenv('STORAGE_TYPE', 'sql').lower()
 

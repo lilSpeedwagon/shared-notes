@@ -2,8 +2,8 @@
 
 import fastapi
 
-from src.api import models
 from src import dependencies
+from src.api import models
 from src.storage import base
 
 router = fastapi.APIRouter(prefix='/api/v1/pastes', tags=['pastes'])

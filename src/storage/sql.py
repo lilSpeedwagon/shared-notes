@@ -5,8 +5,7 @@ import datetime
 import sqlalchemy
 import sqlalchemy.ext.asyncio
 
-from src.storage import base
-from src.storage import utils
+from src.storage import base, utils
 from src.storage.db import models
 
 

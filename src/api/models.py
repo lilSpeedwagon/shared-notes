@@ -44,4 +44,3 @@ class HealthResponse(pydantic.BaseModel):
     """Response model for health check."""
 
     status: str
-

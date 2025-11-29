@@ -34,4 +34,3 @@ def create_storage(
         return src.storage.memory.InMemoryPasteStorage(worker_id=worker_id)
     else:
         raise ValueError(f"Unknown storage type: {storage_type}")
-
